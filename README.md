@@ -1,78 +1,81 @@
 # VAIS Voice
 
-**Voice AI quality and security infrastructure for Kazakh–Russian environments.**
+## Synthetic Speech Authenticity for Kazakh–Russian Environments
 
-VAIS Voice is a planned evaluation, security, and observability platform for voice AI in Kazakhstan and Central Asia. It brings together agent testing, STT/TTS evaluation, code-switching analysis, synthetic/replay audio detection, and regression monitoring.
+VAIS Voice is a research project and future API for detecting synthetic speech in Kazakh, Russian and mixed KZ/RU audio. The product goal is focused: **upload audio → synthetic-speech score with quality, model version and calibration information**.
 
-> **Status: research and platform design.** This repository currently provides a Python scaffold and research documentation. It does not yet place test calls, host a dashboard, score audio, or provide production protection. All modules below are planned; no performance or customer claims are made.
+> Current status: research design and Python scaffold. There is no trained VAIS detector, running upload API or validated KZ/RU performance yet. “Research prototype” is the next deliverable, not a claim of existing functionality.
 
-## Platform modules
+## What the detector should do
 
-| Module | Planned role |
+Analyse short voice messages and recordings processed through real audio codecs and channels. Return a score whose direction is explicit (higher means more synthetic-like), signal-quality observations, model/preprocessing versions, calibration status and limitations. Unsupported or poor-quality input should receive an inconclusive response.
+
+A synthetic score is **not proof of fraud**, not identity verification and not a probability that a particular person is an attacker. Synthetic audio may be legitimate.
+
+## One pipeline, three research components
+
+```text
+Audio → Preprocessing → Language/channel metadata
+      → Synthetic speech detector → Calibration
+      → Authenticity report / score → API / Web demo
+```
+
+- **Detection Model:** real vs synthetic, evaluated separately on KZ, RU and code-switching.
+- **Robustness:** held-out TTS/voice-cloning generators; Opus, MP3, AAC and telephone-like compression; noise and repeated transcoding.
+- **Benchmark:** protected real/synthetic samples, governed provenance and reproducible evaluation. This is R&D infrastructure for validating the detector, not a separate product.
+
+## Planned MVP
+
+Accept a short `.wav`, `.mp3`, `.ogg` or `.opus` file. Validate actual content, decode in isolation, measure signal properties, infer and return a versioned report. Set supported durations and upload limits after profiling.
+
+A report should contain filename, duration/sample rate, language/channel metadata with provenance (supplied, inferred or unknown), raw synthetic score, calibration status, supported-domain checks, model version and uncertainty/abstention reason. Do not label confidence “high” merely because a raw score is large.
+
+The website contains a **static report mockup**, not an upload service. Its 0.87 score and VAIS-VA v0.1 name are illustrative, not measured results or a released model.
+
+## Evaluation
+
+| Metric / test | Purpose |
 | --- | --- |
-| **VAIS VoiceBench** | Scenario-driven automated voice-agent tests: task completion, intents, tool calls, grounded responses, policy checks, latency and interruption recovery. |
-| **VoiceGuard** | Synthetic/deepfake and replay screening with documented thresholds, calibration and abstention. Separate from task-quality scoring. |
-| **Speech Intelligence** | STT, language identification, diarization, code-switch detection, conversation transcripts, intent and failure analysis; TTS intelligibility and pronunciation evaluation. |
-| **Continuous Evaluation** | Version-to-version comparisons and policy-defined CI gates over a pinned benchmark. Enterprise monitoring is a later phase. |
+| ROC-AUC | Threshold-independent ranking of real vs synthetic; synthetic is positive. |
+| EER | Equal false-positive / false-negative error rate. |
+| FPR@TPR95 | Real audio incorrectly flagged at 95% synthetic recall; record ROC interpolation and uncertainty. |
+| Calibration | Reliability diagrams, Brier score, ECE and class prevalence on held-out data. |
+| Unseen-generator | Generator families/versions excluded from training and calibration. |
+| Codec/noise robustness | Matched transformations across both classes, including transcoding and re-recording. |
+| Language slices | KZ, RU and KZ↔RU with counts and intervals. |
+| Cross-speaker | No leakage of speakers, source recordings or derivatives across protected splits. |
 
-The name **VAIS VoiceBench** is a working module name, not the independent [academic VoiceBench](https://aclanthology.org/2026.tacl-1.18/). No affiliation is claimed.
+Also choose operating thresholds on development data only, then report actual held-out TPR/FPR. FPR@TPR95 is an evaluation summary, not permission to tune a deployed threshold on the test set.
 
-## First MVP: 100 authorised test calls
+Read the [evaluation protocol](docs/evaluation-protocol.md) and [six annotated scientific references](docs/scientific-basis.md). These sources motivate research; they do not establish our model's accuracy.
 
-A user connects an agent's **sandbox endpoint**, selects a versioned KZ/RU suite, and runs 100 simulated test calls. This is a planned deliverable, not a working feature.
+## 12-week plan
 
-```text
-Agent version + approved sandbox
-              ↓
-100 versioned KZ / RU / mixed-speech scenarios
-              ↓
-Audio + transcript + tool trace + timings
-              ↓
-Deterministic checks + reviewed evaluation rubrics
-              ↓
-Regression report → PASS / FAIL / REVIEW
-```
+- **Weeks 1–4:** licensed genuine/synthetic corpus, leakage-safe splits, baselines and reproducible benchmark.
+- **Weeks 5–8:** KZ/RU, unseen generators, codecs/noise, calibration and model selection.
+- **Weeks 9–12:** web/API prototype, public benchmark report and restricted demo, conditional on data/model readiness.
+- **Later:** streaming, batch API, enterprise/on-prem deployments and additional anti-spoof scenarios. Replay detection requires separate validation.
 
-The report separates task completion, Kazakh and Russian WER/CER, code-switch errors, intent accuracy, P95 response latency, tool-call success, interruption recovery, policy violations, and critical failures. “Accuracy” is not a single unqualified percentage; definitions and denominators are in the [evaluation protocol](docs/evaluation-protocol.md).
+[Research plan](docs/research-plan.md) · [Architecture](docs/architecture.md) · [Data and ethics](docs/data-and-ethics.md)
 
-Each failed test links approved audio, transcript, expected behaviour, actual behaviour, failure reason, agent/config versions, and evaluator provenance. Missing evidence is inconclusive, not a pass. VoiceGuard adds a separate research score with tested attack/channel scope, not an automatic fraud verdict.
+## Repository
 
-One 100-call suite is a feasibility milestone, not evidence of enterprise readiness, comprehensive safety or statistically precise rare-failure rates.
-
-## Regional focus and intended users
-
-Kazakh, Russian and within-dialogue code-switching; local names, addresses, numbers, tenge amounts and banking terminology; regional speech, noisy channels, telephony compression and interruptions.
-
-Initial intended users: banks/fintech, telecoms, insurance, contact centres, voice-agent developers and public services. These are target segments, not existing customers. VAIS Voice is intended to test vendors' agents independently, rather than replace them.
-
-## Research contribution
-
-The proposed asset is a governed **VAIS Voice Benchmark**: realistic, versioned local scenarios, reviewed annotations and documented failure cases. Such a corpus does not yet exist in this repository. Its value must be demonstrated through coverage, reproducibility, reviewer agreement and ability to catch held-out regressions; market defensibility is a hypothesis.
-
-[Seven annotated scientific sources](docs/scientific-basis.md) explain the methodological basis and limitations. Sources motivate the work; they do not prove VAIS Voice's future effectiveness or business demand.
-
-## Roadmap
-
-- **Weeks 1–4:** governance, scenario taxonomy, sandbox contract, bilingual rubrics and reference annotations.
-- **Weeks 5–8:** one agent connector, a 100-call runner and inspectable failure reports; baseline STT/TTS and separate VoiceGuard research evaluation.
-- **Weeks 9–12:** paired regression experiments, repeated runs, unseen-condition testing and a restricted demonstration, subject to data and integration readiness.
-- **Later:** production observability, policy/compliance workflows, model/vendor comparisons, larger suites, CI integrations and on-premises deployment.
-
-See the [research plan](docs/research-plan.md), [architecture](docs/architecture.md) and [data and ethics](docs/data-and-ethics.md).
-
-## Repository and local setup
-
-The existing repository URL and Python package identifier `kazakh_russian_speech_intelligence` are retained for compatibility. **VAIS Voice** is the current project name; the historical identifier does not limit the new scope.
+The existing GitHub URL and Python import `kazakh_russian_speech_intelligence` remain stable. The public project name is VAIS Voice. Renaming the repository/package is a separate migration.
 
 ```text
-configs/       Scenario and evaluation configuration guidance
-data/          Manifest and local-data rules; no private recordings
-docs/          Platform design, protocols, scientific basis, governance
-models/        Model cards; weights remain external
-notebooks/     Exploration only
-src/           Python scaffold (not the platform implementation)
-tests/         Scaffold checks, not model-quality validation
+benchmark/     Benchmark scope and evaluation contract
+configs/       Reproducibility requirements
+data/          Manifest rules; raw data remains local/external
+docs/          Research, metrics, architecture and governance
+models/        Model-card rules; no released weights
+src/           Python scaffold
+tests/         Scaffold checks, not detector-performance validation
+notebooks/     Research exploration
 ```
+
+The planned detection/preprocessing/evaluation code and future API/web components are described in [architecture](docs/architecture.md); they are not implemented by this documentation update.
+
+## Development
 
 Python 3.11+:
 
@@ -86,14 +89,10 @@ ruff format --check .
 pytest
 ```
 
-Do not commit raw audio, sensitive transcripts, credentials, customer endpoints, identity mappings or model weights. Calls must target owned or explicitly authorised test systems; tools must use mock transactions, never real money movement or real customer actions.
+Do not commit recordings, sensitive transcripts, identity mappings, credentials or model weights. Do not train on user uploads by default.
 
-## Responsible use
-
-Synthetic speech can be legitimate. VoiceGuard is an auxiliary signal, not identity verification, proof of fraud or a reason to deny service by itself. Policy tests are checks against specified rules, not legal certification. Human review remains necessary for ambiguous or high-impact cases.
-
-[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Citation](CITATION.cff) · [MIT code licence](LICENSE). Data and models retain separate licences.
+[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Citation](CITATION.cff) · [MIT code licence](LICENSE). Audio, datasets and weights have separate rights.
 
 ---
 
-**По-русски:** VAIS Voice — проект платформы тестирования, безопасности и мониторинга голосовых AI-систем для казахско-русской среды. Первый MVP: подключить sandbox голосового агента, выполнить 100 автоматических тестовых звонков и получить отчёт с метриками, аудио и причинами ошибок. VAIS VoiceBench, VoiceGuard, Speech Intelligence и Continuous Evaluation пока находятся на стадии проектирования. Production-мониторинг, enterprise-интеграции и on-prem — дальнейшие этапы, не готовые возможности.
+**По-русски:** VAIS Voice — исследовательский проект обнаружения синтетической речи в казахско-русской среде. Первый продуктовый MVP: загрузка короткого аудио и отчёт со score, качеством сигнала, версией модели и статусом калибровки. KZ/RU Anti-Spoofing Benchmark служит проверке детектора. Готовой модели и опубликованных результатов пока нет.

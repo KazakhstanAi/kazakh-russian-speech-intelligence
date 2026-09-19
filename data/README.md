@@ -1,9 +1,7 @@
-# Data directory
+# Audio data
 
-The planned VAIS Voice Benchmark includes reviewed KZ/RU scenarios, local terminology, expected task/tool outcomes, transcript/language annotations, interruption cases and failure taxonomy. It is not an existing released dataset. Future manifests must separate synthetic fixtures from consented recordings and freeze scenario-template splits as well as speaker splits.
+Track manifests and safe fixtures, not raw recordings. Local raw/, interim/ and processed/ directories remain ignored.
 
-This repository tracks manifests, schemas, and synthetic fixtures—not raw corpora.
+Each manifest records source, rights, real/synthetic/uncertain label provenance, source/target speaker identifiers, generator family/version, recording/derivative groups, transformations, checksum, partition and retention/deletion policy.
 
-Local-only `raw/`, `interim/`, and `processed/` directories are ignored by Git. Do not override the rules to commit recordings, transcripts with personal data, speaker mappings, embeddings, generated attacks, or signed download URLs.
-
-Every manifest must record source, version, consent/legal basis, licence, permitted use, redistribution status, checksums, transformations, speaker partition, and retention/deletion policy.
+Protect KZ, RU and code-switching slices and held-out generators. Match audio channels across classes. Do not force-add private audio, transcripts, embeddings or identity mappings.

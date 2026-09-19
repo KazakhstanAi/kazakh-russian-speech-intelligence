@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this research scaffold, cite the repository and the revision used."
-title: "VAIS Voice: Kazakh-Russian Voice AI Evaluation, Security and Observability"
+message: "Cite the repository and exact revision used; no validated detector release is claimed."
+title: "VAIS Voice: Synthetic Speech Authenticity for Kazakh-Russian Environments"
 type: software
 authors:
   - name: "Vais Research"
@@ -9,8 +9,8 @@ url: "https://vaislabs.com/projects/voice"
 license: MIT
 version: 0.1.0
 keywords:
-  - voice agent evaluation
-  - Kazakh-Russian code-switching
-  - speech quality
-  - audio anti-spoofing
-  - regression testing
+  - synthetic speech detection
+  - audio deepfake detection
+  - Kazakh-Russian speech
+  - unseen-generator generalization
+  - score calibration

@@ -1,5 +1,5 @@
-# Experiment configurations
+# Detection experiment configurations
 
-VAIS Voice configuration designs cover scenario suites, authorised agent connectors, STT/TTS baselines, VoiceGuard and regression gates. Record scenario and agent versions, codec/noise profile, call limits, timeouts, evaluator versions and PASS/FAIL/REVIEW policy. Connector secrets and real destination numbers stay outside Git. No working runner is provided yet.
+Record corpus/split manifests, model revision, preprocessing, sample rate, codec/noise transforms, seeds, calibration partition/version, score direction and operating threshold. Keep test data out of selection and calibration. No private paths, signed URLs or credentials.
 
-Committed configurations must be declarative and contain no credentials, personal information, private URLs, or machine-specific absolute paths. Every result should identify its configuration, code revision, data manifest, speaker/attack split, random seed, and runtime environment.
+Future inference configurations must declare size/duration/format limits and inconclusive-input handling; no runtime service is implemented yet.

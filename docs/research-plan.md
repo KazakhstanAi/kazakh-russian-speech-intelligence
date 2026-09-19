@@ -1,37 +1,33 @@
-# VAIS Voice — 12-week research plan
+# VAIS Voice — focused 12-week research plan
 
-## Questions and hypotheses
+## Research question
 
-1. Does a locally curated KZ/RU scenario suite reveal regressions missed by monolingual clean-audio tests?
-2. Do end-to-end task and tool checks identify failures that WER alone misses?
-3. How well do automated bilingual rubrics agree with human reviewers, especially for policy and interruption recovery?
-4. How much do codecs, noise, new generators and replay environments degrade VoiceGuard?
-5. Are repeated runs and pinned scenarios sufficient for stable version-to-version comparisons within the available budget?
+How reliably can synthetic speech be distinguished from genuine speech in Kazakh, Russian and mixed-language recordings when generators and audio channels differ from training?
 
-These are hypotheses, not established findings. Compare against clean monolingual evaluation, ASR-only metrics, deterministic rule checks and human review using equal testing budgets.
+The benchmark is R&D evidence for this detector, not the product itself.
 
-## Weeks 1–4: benchmark and governance
+## Weeks 1–4: data and baselines
 
-Define consent, licences, retention, sandbox access and cost limits. Curate scenario families and local entities, prepare reviewed transcripts and expected mock tool outcomes, freeze split policy and metric definitions. Audit relevant public corpora before reuse.
+Audit licences/consent and label provenance for genuine and synthetic corpora. Create leakage-safe speaker/source/derivative splits and hold out generator families. Define matched preprocessing and quality checks. Reproduce simple spectral and established anti-spoof baselines.
 
-**Gate:** bilingual reviewers can reconstruct approved fixtures and agree on expected outcomes; the connector cannot reach unauthorised destinations or transact against production systems.
+**Gate:** traceable approved samples, split audit and reproducible baseline report; no claims based on unknown rights or labels.
 
-## Weeks 5–8: bounded MVP
+## Weeks 5–8: robustness and calibration
 
-Implement one sandbox connector and a planned 100-call runner. Save inspectable evidence, implement deterministic assertions and latency measurement, add baseline STT/TTS evaluation. Evaluate a separate VoiceGuard baseline on approved audio; do not promise a joint model or calibrated fraud probability.
+Evaluate language slices, unseen generators, codec/noise shifts, repeated encoding and re-recording. Fit calibration on held-out development data. Select a model with documented compute/latency constraints.
 
-**Gate:** calls respect allowlists, cancellation, concurrency and cost caps; every report is traceable to versions. Infrastructure failures are visible, not silently retried away.
+**Gate:** frozen model/configuration, operating threshold and calibrator; independent test remains untouched until selection completes.
 
-## Weeks 9–12: evaluation and restricted demo
+## Weeks 9–12: product prototype
 
-Compare two agent revisions using paired fixtures and repeated runs. Audit evaluator agreement with bilingual reviewers. Test held-out speakers, scenarios, codecs and generators, calibrate only on development data, report uncertainty and limitations. Demonstrate regression reports and PASS/FAIL/REVIEW gates.
+Implement bounded audio upload, isolated decoding, inference and a versioned report. Publish benchmark methodology and aggregate results, with a restricted demo using permitted samples. Clearly report unsupported inputs, score direction, calibration scope and uncertainty.
 
-**Gate:** end-to-end reports, reproducibility instructions, quality/coverage analysis, human review and data-governance checks. If references or integrations are inadequate, publish a feasibility report rather than claim a complete platform.
+**Gate:** reproducible held-out metrics plus a safe web/API prototype; no prototype is claimed before it exists. If data/model gates fail, publish the feasibility findings rather than promising reliable detection.
 
 ## Compute planning
 
-The prior ASR-training-first GPU estimate is superseded. Start by measuring cost per simulated call, audio minute, STT/TTS request, judge evaluation and local detector batch. Budget repeats, API quotas and storage retention. GPU training is conditional on a demonstrated adaptation need; no justified GPU-hour figure exists yet.
+Measure throughput and memory for chosen baselines first. Budget adaptation, independent runs, robustness matrices and calibration separately. Storage depends on licensed audio, protected source/derivative manifests and retention. No justified fixed GPU-hour commitment exists yet.
 
-## After the MVP
+## Later
 
-Production monitoring, model/vendor comparison, enterprise policy workflows, CI adapters, broader language/channel coverage and on-prem deployments are separate roadmap phases. Access to live customer calls requires new approval and governance.
+Streaming inference, batch API, enterprise deployment, on-premises operation and additional anti-spoof scenarios/integrations. Genuine replay is not synthetic speech; replay detection is a separate validation scope.

@@ -1,39 +1,36 @@
-# Evaluation protocol — proposed, not validated results
+# KZ/RU synthetic-speech detection protocol
 
-## Benchmark design
+## Labels and protected partitions
 
-Start with a versioned 100-call suite stratified across KZ, RU and mixed speech, local entities, realistic tasks, channel degradation and interruptions. Publish exact slice counts before running; 100 calls cannot adequately cover every combination. Separate development scenarios from held-out templates, speakers, source recordings and synthetic derivatives. Keep unseen generators/channels for VoiceGuard evaluation.
+Synthetic speech is the positive class; genuine human speech is negative. Record label provenance and ambiguous/edited cases separately. Re-recording genuine speech does not make it synthetic. A real/synthetic classifier is not automatically a replay detector.
 
-Repeat stochastic scenarios and pair agent versions on the same fixtures. Report confidence intervals, sample counts, retries, timeouts and missing observations. Never tune thresholds against held-out results.
+Use separate training, model-selection/development, calibration and protected test partitions. Group speakers, source recordings, near-duplicates, prompts where relevant, source/target voice identities and all synthetic derivatives. Unseen-generator evaluation holds out entire generator families/versions from training, tuning and calibration. Record what is known about pretrained-model exposure; do not claim universal absence of pretraining leakage.
 
-## Metrics
+Match language, duration and channel distributions across classes. Apply codec/noise transformations comparably, preventing shortcut detection of file format, silence or dataset provenance.
 
-| Output | Definition / evidence |
-| --- | --- |
-| Task completion | Goal reached / attempted eligible tasks, checked against mock backend state; failed calls stay in denominator. |
-| Kazakh / Russian | WER and CER on human reference transcripts with a frozen normalization policy; report separately, not as generic “accuracy”. |
-| Code-switching | WER around annotated switch spans, token language-ID F1 and local-entity exact match with alignment rules. |
-| Intent accuracy | Correct reference intent / labelled utterances; retain unknown/out-of-scope cases. |
-| P95 response latency | 95th percentile from annotated user-turn end to first audible agent response; report network/codec setup and timeouts separately. |
-| Tool-call success | Correct tool, validated arguments and intended mock state transition / expected invocations; report extra harmful calls separately. |
-| Interruption recovery | Resumption at the correct workflow state and response to the interjection / annotated interruptions; separately measure stop latency. |
-| Grounding / hallucinations | Unsupported claims against scenario evidence, with inspected traces and bilingual review for disputed cases. |
-| Policy violations / critical failures | Counts and rates against predeclared, versioned rules and severity taxonomy; not a claim of legal compliance. |
-| TTS | Native-speaker intelligibility, naturalness and local-name/number pronunciation; acoustic predictors are supplementary and require local validation. |
-| VoiceGuard | EER for comparison; fixed-threshold FPR/FNR, PR-AUC and calibration on held-out languages, attacks and channels. Use min t-DCF only when an ASV tandem protocol and costs are specified. |
+## Core metrics
 
-A VoiceGuard score is not a probability unless calibrated and validated for the stated deployment distribution. Distinguish synthetic, replay and bona fide samples; report uncertainty or abstention instead of invented confidence.
+- **ROC-AUC:** ranking quality; report class direction, sample counts and confidence intervals.
+- **EER:** rate at equal FPR and FNR, documenting interpolation. Not necessarily a suitable operational threshold.
+- **FPR@TPR95:** fraction of genuine audio flagged where synthetic recall reaches 95% on the evaluation ROC. Specify interpolation/ties and uncertainty. This threshold is descriptive, not deployable.
+- **Operational FPR/FNR/TPR:** freeze a threshold on development data (e.g. target 95% development TPR) and report achieved held-out rates without retuning.
+- **Calibration:** reliability diagrams, Brier score and ECE with binning, sample size and class prevalence; fit on calibration data only. Balanced-benchmark probability need not transfer to production.
+- **Abstention:** coverage, rejected files, low-quality/unsupported inputs and errors. Report conditional metrics and coverage together; do not quietly remove hard examples.
 
-## Regression gate
+Bootstrap at independent speaker/source groups rather than treating transformed copies as independent samples. Record seeds, versions, bootstrap settings and per-slice counts. Report uncertainty when 95% recall or rare false positives are poorly resolved by sample size.
 
-- **FAIL:** a predeclared critical rule fails, or a sufficiently supported regression exceeds the agreed tolerance.
-- **PASS:** coverage is adequate and all predeclared checks satisfy their thresholds.
-- **REVIEW:** missing references, insufficient sample size, judge disagreement, infrastructure errors or distribution shift.
+## Required slices
 
-Agree tolerances, minimum slice sizes, repeated-run budget and critical rules before evaluation. A sample count of 100 is an MVP workload, not a universal pass standard.
+KZ, RU and KZ↔RU; known/unseen generator; cross-dataset/domain; MP3/Opus/AAC and telephone-like coding; repeated encoding; microphone/background noise; re-recording; duration and quality. Publish transformation parameters. Document sample-rate conversions, channel mixing, clipping and silence processing identically across classes.
 
-Use deterministic backend assertions wherever possible. Validate LLM judges against bilingual human labels, track agreement by metric and version rubrics. Judge prompts must treat call contents as untrusted data and must have no transaction authority.
+## Baselines and model selection
 
-## Failure report
+Compare a simple spectral-feature classifier with an established anti-spoof architecture such as AASIST under the same partitions and preprocessing. More complex encoders are candidates, not presumed winners. Select on development performance and robustness, not the held-out test.
 
-Each failure retains approved audio, transcript, expected/actual behaviour, failure reason, relevant tool events, latency timestamps, language/channel slice and evaluator provenance. Sensitive evidence remains access controlled; exported summaries are redacted.
+## Meaning of a score
+
+A raw model score measures model evidence, not truth. Do not display “high confidence” from magnitude alone. Any uncertainty label needs a specified validated method. A calibrated synthetic probability is conditional on the evaluated distribution and must not be represented as a person's fraud probability.
+
+## Reproducible release
+
+Publish configurations, manifest versions/checksums where rights permit, exclusions, calibration/threshold provenance, metrics with intervals and failure analysis. Raw restricted audio stays protected. Model cards identify tested and unsupported conditions.

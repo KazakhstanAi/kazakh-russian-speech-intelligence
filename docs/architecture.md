@@ -1,37 +1,43 @@
-# VAIS Voice — proposed architecture
+# VAIS Voice — proposed audio-authenticity pipeline
 
-All components below are planned. The Python package is a scaffold only.
+All components are planned. The existing Python package is a scaffold.
 
 ```mermaid
 flowchart TD
-    S[Versioned scenarios + consented fixtures] --> B[VAIS VoiceBench runner]
-    A[Authorised sandbox agent connector] <--> B
-    B --> T[Audio + timed events + mock tool traces]
-    T --> I[Speech Intelligence: STT / LID / diarization / switch analysis]
-    T --> G[VoiceGuard: separate audio screening]
-    I --> E[Deterministic checks + versioned judge rubrics + human review]
-    E --> R[Evidence-linked report]
-    G --> R
-    R --> C[Continuous Evaluation: compare revisions]
-    C --> D[PASS / FAIL / REVIEW]
+    A[Audio upload] --> V[Validate format / size / duration]
+    V --> P[Isolated decoding and preprocessing]
+    P --> M[Language / channel metadata with provenance]
+    M --> D[Versioned synthetic speech detector]
+    D --> C[Development-fitted calibration]
+    C --> R[Score + quality + uncertainty + model version]
+    R --> W[API / Web demo]
+    V --> U[Unsupported / inconclusive]
+    P --> U
+    D --> U
 ```
 
-## Boundaries
+## Components
 
-- **VoiceBench:** execution and expected behaviours; simulated personas use licensed or consented voices, not unapproved impersonation.
-- **VoiceGuard:** audio-authenticity research. Separate models/protocols may be needed for replay and generated speech; abstain outside validated scope.
-- **Speech Intelligence:** reusable observations, not verified truth. Preserve ASR uncertainty and human reference annotations separately.
-- **Continuous Evaluation:** immutable benchmark, agent, tool fixture, evaluator and policy versions. Never silently compare different suites.
-- **Later monitoring:** opt-in, minimised and access-controlled production traces. Offline testing does not imply permission to ingest live calls.
+1. Detection Model: real vs synthetic; baseline comparison with explicit input normalization.
+2. Robustness: unknown generators, codec/noise/duration shifts, re-recording and repeated encoding.
+3. Benchmark: protected corpus, split audit, calibration and reproducible reports; not a separate product.
 
-## Connector contract
+Language/channel metadata can be supplied, estimated or unknown. Codec container does not prove processing history. Do not disguise estimates as known facts. Metadata must not leak labels or generator identity to the detector.
 
-Record an endpoint alias (secret URL kept outside Git), agent revision, audio transport/codec, timeout, concurrency and cost limits, mock tool interface, approved destination allowlist and cancellation mechanism. Start with one connector, not promised universal integrations.
+## Planned code boundaries
 
-## Evidence model
+Within the current package, future `detection/`, `preprocessing/` and `evaluation/` modules should own inference, safe audio normalization and metrics. Future `api/` and `web/` components should consume a versioned report contract. These directories/services are not implemented yet.
 
-A report references run ID, scenario ID/version, seed, agent revision, timestamps, channel settings, audio/transcript retention class, tool trace, expected vs actual outcomes, metrics, judge prompt/model version and reviewer decisions. Keep identifying content in restricted storage; redact exports.
+## Planned report contract
 
-## Enterprise direction, not MVP commitments
+Request ID; filename; duration, sample rate and codec/container; language/channel label and provenance; model and preprocessing version; raw score and its direction; optional calibrated synthetic probability with calibrator ID and validation scope; quality checks; uncertainty method; abstention reason; retention/deletion status.
 
-Role-based access, tenant isolation, production drift monitoring, vendor comparison, policy workflows, CI adapters and on-prem delivery require later implementation and security review. Do not present them as available services.
+The main score is named **synthetic score**: higher means more synthetic-like. The report title “authenticity” must not invert that direction. A calibrated probability is optional, distribution-dependent and is never a probability of criminal intent. Return null/not available rather than invented confidence.
+
+## Security boundaries
+
+Validate media contents, not just extensions. Isolate decoder execution, limit resources, remove uploads according to retention policy, restrict evidence access and redact logs. Never accept arbitrary remote URLs in the initial upload design. No reuse for training without separate documented permission.
+
+## Later phases
+
+Streaming, batch processing, enterprise/on-prem delivery and replay/other anti-spoof scenarios need separate design and validation.

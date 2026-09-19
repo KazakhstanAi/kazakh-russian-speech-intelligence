@@ -1,7 +1,5 @@
-# Model artefacts
+# Detector artefacts
 
-For VAIS Voice, document STT/TTS baselines, VoiceGuard detectors and any automated judges independently. Record judge model/prompt versions and human-agreement audits; do not imply that an acoustic quality predictor measures task correctness. No trained VAIS models are released yet.
+No trained VAIS detector is released yet. Model cards must record real/synthetic task scope, score direction, source licences, split integrity, generator/channel/language coverage, ROC-AUC/EER/FPR@TPR95, fixed-threshold rates, calibration evidence, uncertainty/abstention and reproducible code/configuration versions.
 
-Store model cards, architecture notes, and small evaluation summaries here. Weights remain in versioned, access-controlled external storage and are referenced by immutable identifier and checksum.
-
-Each model card must document data and consent boundaries, speaker/attack splits, metrics, calibration, intended use, limitations, subgroup and unseen-condition analysis, compute footprint, licence, and exact code/configuration revision.
+Keep weights in versioned access-controlled storage. A raw score is not automatically a probability; replay detection requires separate evidence.

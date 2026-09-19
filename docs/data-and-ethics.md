@@ -1,48 +1,29 @@
-# Data and ethics
+# Audio data and responsible use
 
-Applies to all proposed VAIS Voice modules, including benchmark scenarios, test calls, STT/TTS evaluation, VoiceGuard and future production monitoring.
-
-## Authorised testing and monitoring
-
-- Run simulated calls only against owned or explicitly authorised sandbox endpoints and destination allowlists, with cost, concurrency and duration limits.
-- Use mock account records and tools; no real transactions, emergency calls or unsolicited customer calls.
-- Use fictional local entities in fixtures and approved voices; no impersonation of real customers or employees.
-- Define the purpose and retention of each recording. Benchmark access does not authorise reuse of production calls or model training.
-- Production monitoring is a future opt-in capability requiring its own access, recording, redaction and deletion review.
-- Store raw evidence separately from redacted reports. Restrict tenant access and treat agent transcripts as untrusted input to automated judges.
-- Synthetic audio is not inherently malicious. VoiceGuard must support human review and must not independently deny service.
+Applies to synthetic-speech detection research and future audio uploads.
 
 ## Before ingestion
 
-Every corpus needs an owner, canonical source, version, licence, consent or other documented legal basis, permitted purposes, redistribution status, retention period, deletion procedure, and access classification. If any field is unknown, the data stays out of training.
+Every corpus requires source/owner, version, licence, consent or documented basis for use, permitted purposes, redistribution status, retention/deletion policy and access class. Unknown rights or uncertain real/synthetic provenance exclude a sample from supervised training.
 
-## Identity and privacy
+Use only approved voices for synthetic-data generation. Do not build or release an impersonation pipeline. Public audio is not automatically authorised for training or redistribution.
 
-- assign research identifiers instead of using participant names;
-- store re-identification keys separately with restricted access;
-- minimise demographic metadata and justify every retained field;
-- encrypt restricted audio at rest and in transit;
-- log access to private corpora;
-- honour withdrawal and deletion obligations through traceable manifests.
+## Privacy
 
-Voice is biometric data in many contexts. Public availability is not automatically permission for model training, redistribution, or impersonation research.
+Use research IDs, restrict and separate identity mappings, encrypt protected recordings and log access. Honour withdrawal through traceable manifests. Do not reuse uploads for training by default; define retention and deletion before any live demo. Redact exported reports and logs.
 
-## Partitioning and leakage
+## Leakage and label integrity
 
-The same speaker, source recording, near-duplicate utterance, or synthetic derivative must not cross protected partitions. Attack generators and versions must be recorded so unseen-attack evaluation is meaningful. Text overlap and shared background audio should also be audited.
+Group speaker/source/derivative families across protected splits. Document synthetic generator version and source/target speaker provenance. Keep unseen generator families out of training, tuning and calibration. Audit duplicate audio, shared backgrounds and source-domain shortcuts.
 
-## Anti-spoof threat model
+Distinguish genuine, synthetic and uncertain/partially edited samples. Re-recorded genuine audio remains genuine for this task; an attack label is not identical to a synthetic label.
 
-The detector may encounter replay, text-to-speech, voice conversion, cloned speech, editing/splicing, compression, telephony, noise, and adversarial post-processing. The project does not claim universal deepfake detection. Each model card must specify which attacks and channels were tested and what remains unknown.
+## Threat and release model
 
-## Release review
+Study TTS/voice cloning, compression, telephony-like coding, noise and transcoding. Additional replay or manipulation detection is future work, not implied coverage.
 
-Before publishing audio, transcripts, embeddings, checkpoints, or a demo:
+Before release: verify rights, assess identification/reconstruction/impersonation risks, remove secrets, review access/rate limits and retention, and provide incident/deletion procedures. Keep restricted samples and model artefacts outside Git.
 
-1. verify consent and licence compatibility;
-2. assess speaker-identification, reconstruction, impersonation, and harassment risks;
-3. remove secrets, identity mappings, and unintended personal content;
-4. limit rate, access, retention, and output detail where needed;
-5. document takedown, correction, and incident-response contacts.
+## Interpretation
 
-Generated speech used for detector research should be access-controlled when release would materially improve impersonation capability.
+Synthetic speech may be legitimate. Scores are not proof of fraud or verification of identity. Do not independently deny service or make accusations from a score. Calibrated probability requires a stated reference distribution; shift may invalidate it. Unsupported or poor-quality audio requires abstention or explicit uncertainty.
