@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this project, cite the repository and the version used."
+title: "Kazakh–Russian Speech Intelligence"
+type: software
+authors:
+  - name: "Kazakhstan AI"
+repository-code: "https://github.com/KazakhstanAi/kazakh-russian-speech-intelligence"
+url: "https://github.com/KazakhstanAi/kazakh-russian-speech-intelligence"
+license: MIT
+version: 0.1.0
+date-released: 2026-09-19
+keywords:
+  - Kazakh speech recognition
+  - Russian speech recognition
+  - code-switching
+  - anti-spoofing
+  - synthetic speech detection

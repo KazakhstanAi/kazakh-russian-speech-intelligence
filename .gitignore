@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Audio, transcripts, datasets, and model outputs
+data/raw/
+data/interim/
+data/processed/
+artifacts/
+checkpoints/
+outputs/
+mlruns/
+*.wav
+*.flac
+*.mp3
+*.m4a
+*.ogg
+*.opus
+*.sph
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.parquet
+
+!data/README.md

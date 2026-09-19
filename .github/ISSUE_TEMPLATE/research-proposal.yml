@@ -1,0 +1,40 @@
+name: Research proposal
+description: Propose a dataset, experiment, model, or evaluation change.
+title: "[Research]: "
+labels: [research]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Research question
+      description: State one falsifiable question or hypothesis.
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data, consent, and licence
+      description: Identify sources, versions, consent/legal basis, permitted uses, and redistribution terms.
+    validations:
+      required: true
+  - type: textarea
+    id: split
+    attributes:
+      label: Split and leakage controls
+      description: Explain speaker, recording, attack, and time separation.
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Method, baselines, and success criteria
+      description: List comparisons, metrics, thresholds, compute budget, and stop conditions.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Governance
+      options:
+        - label: I reviewed privacy, consent, licensing, bias, impersonation, and dual-use risks.
+          required: true
