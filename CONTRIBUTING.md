@@ -1,6 +1,6 @@
 # Contributing
 
-The project is at the research-design stage. Contributions must protect speakers, preserve dataset provenance, and avoid overstating detector capability.
+VAIS Voice is at the platform-design stage. Contributions must protect speakers, preserve benchmark provenance, and distinguish planned features from working implementations.
 
 ## Before starting
 
@@ -23,6 +23,6 @@ Use focused branches and the pull-request checklist. Reusable logic belongs in `
 
 ## Research changes
 
-State the hypothesis, baseline, dataset manifest, consent/licensing status, speaker and attack split, metrics, seeds, compute budget, and failure analysis. Anti-spoofing work must include an unseen-condition evaluation and must not publish a reusable impersonation pipeline.
+State the hypothesis, baseline, scenario/corpus manifest, consent/licensing status, speaker/scenario/attack splits, metrics, seeds, cost budget, and failure analysis. Follow docs/evaluation-protocol.md. Automated calls require an authorised sandbox, allowlisted destinations, cost limits and mocked tools. Never invoke real financial or customer actions. Anti-spoofing work must include unseen-condition evaluation and must not publish a reusable impersonation pipeline.
 
 By contributing, you agree that your code contribution is licensed under the MIT License. Data, audio, transcripts, and model artefacts require separate review and licensing.

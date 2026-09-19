@@ -1,70 +1,37 @@
-# 12-week research plan
+# VAIS Voice — 12-week research plan
 
-## Track A — code-switching ASR
+## Questions and hypotheses
 
-### Hypothesis
+1. Does a locally curated KZ/RU scenario suite reveal regressions missed by monolingual clean-audio tests?
+2. Do end-to-end task and tool checks identify failures that WER alone misses?
+3. How well do automated bilingual rubrics agree with human reviewers, especially for policy and interruption recovery?
+4. How much do codecs, noise, new generators and replay environments degrade VoiceGuard?
+5. Are repeated runs and pinned scenarios sufficient for stable version-to-version comparisons within the available budget?
 
-Language-aware adaptation and sampling can reduce errors near Kazakh–Russian switch boundaries compared with an unadapted multilingual ASR baseline, without materially degrading monolingual Kazakh recognition.
+These are hypotheses, not established findings. Compare against clean monolingual evaluation, ASR-only metrics, deterministic rule checks and human review using equal testing budgets.
 
-### Evaluation rules
+## Weeks 1–4: benchmark and governance
 
-- speaker-disjoint train, validation, and test partitions;
-- separate monolingual, code-switched, and switch-boundary reporting;
-- explicit transcript normalisation policy for punctuation, numerals, casing, scripts, and loanwords;
-- WER and CER plus a documented language-aware/switch metric;
-- error analysis for named entities, morphology, rare words, acoustic conditions, and language confusion.
+Define consent, licences, retention, sandbox access and cost limits. Curate scenario families and local entities, prepare reviewed transcripts and expected mock tool outcomes, freeze split policy and metric definitions. Audit relevant public corpora before reuse.
 
-## Track B — anti-spoofing
+**Gate:** bilingual reviewers can reconstruct approved fixtures and agree on expected outcomes; the connector cannot reach unauthorised destinations or transact against production systems.
 
-### Hypothesis
+## Weeks 5–8: bounded MVP
 
-A detector trained with diverse attack and channel augmentation can improve performance on unseen generators and codecs over a standard public-data baseline, while retaining calibrated scores on bona fide Kazakh and Russian speech.
+Implement one sandbox connector and a planned 100-call runner. Save inspectable evidence, implement deterministic assertions and latency measurement, add baseline STT/TTS evaluation. Evaluate a separate VoiceGuard baseline on approved audio; do not promise a joint model or calibrated fraud probability.
 
-### Evaluation rules
+**Gate:** calls respect allowlists, cancellation, concurrency and cost caps; every report is traceable to versions. Infrastructure failures are visible, not silently retried away.
 
-- speaker- and utterance-disjoint partitions;
-- attack families and generator versions recorded in immutable manifests;
-- a held-out unseen-attack set not used for model or threshold selection;
-- EER, minDCF, ROC/PR-AUC, calibration, and fixed-threshold false-positive/false-negative rates;
-- breakdown by language, codec, device, noise, duration, and attack family.
+## Weeks 9–12: evaluation and restricted demo
 
-## Work packages
+Compare two agent revisions using paired fixtures and repeated runs. Audit evaluator agreement with bilingual reviewers. Test held-out speakers, scenarios, codecs and generators, calibrate only on development data, report uncertainty and limitations. Demonstrate regression reports and PASS/FAIL/REVIEW gates.
 
-### WP1 — Governance, corpus, and baselines (weeks 1–4)
+**Gate:** end-to-end reports, reproducibility instructions, quality/coverage analysis, human review and data-governance checks. If references or integrations are inadequate, publish a feasibility report rather than claim a complete platform.
 
-- Approve data-use, consent, retention, and access policies.
-- Define transcript and language-span annotation guidance.
-- Build manifests and leakage-safe partitions.
-- Reproduce one multilingual ASR baseline and one anti-spoofing baseline.
+## Compute planning
 
-**Gate:** a reviewer can reconstruct a small approved sample and reproduce baseline metrics without accessing undeclared data.
+The prior ASR-training-first GPU estimate is superseded. Start by measuring cost per simulated call, audio minute, STT/TTS request, judge evaluation and local detector batch. Budget repeats, API quotas and storage retention. GPU training is conditional on a demonstrated adaptation need; no justified GPU-hour figure exists yet.
 
-### WP2 — Adaptation and robustness (weeks 5–8)
+## After the MVP
 
-- Compare full fine-tuning, parameter-efficient adaptation, and decoding/language-tag strategies within a fixed budget.
-- Evaluate augmentation and representation choices for anti-spoofing.
-- Test codec, channel, noise, duration, and missing-metadata sensitivity.
-
-**Gate:** comparisons share the same data snapshot, partitions, metrics, and documented compute envelope.
-
-### WP3 — Held-out evaluation and demo (weeks 9–12)
-
-- Freeze configurations and thresholds before test-set evaluation.
-- Evaluate unseen conditions and calibration; document failures and subgroup uncertainty.
-- Package offline inference and a restricted demonstrator using approved samples only.
-- Publish model cards, dataset documentation, and reproducibility reports where licences allow.
-
-**Gate:** every displayed output is traceable to data, model, and configuration versions and includes an appropriate limitation notice.
-
-## Initial compute estimate
-
-This planning range must be updated after model size and corpus hours are fixed:
-
-- ASR adaptation and ablations: approximately 300–900 accelerator-hours on 24–80 GB GPUs;
-- anti-spoofing baselines and robustness experiments: approximately 150–500 accelerator-hours;
-- evaluation and inference profiling: approximately 50–150 accelerator-hours;
-- encrypted working storage: capacity driven by approved audio, derived features, checkpoints, and retention requirements.
-
-## MVP completion criteria
-
-The MVP requires governed manifests, speaker-disjoint splits, reproducible baselines for both tracks, code-switch-aware ASR analysis, unseen-attack anti-spoof analysis, model cards, and a restricted demo. Aggregate accuracy alone is not sufficient.
+Production monitoring, model/vendor comparison, enterprise policy workflows, CI adapters, broader language/channel coverage and on-prem deployments are separate roadmap phases. Access to live customer calls requires new approval and governance.

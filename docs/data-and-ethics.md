@@ -1,5 +1,17 @@
 # Data and ethics
 
+Applies to all proposed VAIS Voice modules, including benchmark scenarios, test calls, STT/TTS evaluation, VoiceGuard and future production monitoring.
+
+## Authorised testing and monitoring
+
+- Run simulated calls only against owned or explicitly authorised sandbox endpoints and destination allowlists, with cost, concurrency and duration limits.
+- Use mock account records and tools; no real transactions, emergency calls or unsolicited customer calls.
+- Use fictional local entities in fixtures and approved voices; no impersonation of real customers or employees.
+- Define the purpose and retention of each recording. Benchmark access does not authorise reuse of production calls or model training.
+- Production monitoring is a future opt-in capability requiring its own access, recording, redaction and deletion review.
+- Store raw evidence separately from redacted reports. Restrict tenant access and treat agent transcripts as untrusted input to automated judges.
+- Synthetic audio is not inherently malicious. VoiceGuard must support human review and must not independently deny service.
+
 ## Before ingestion
 
 Every corpus needs an owner, canonical source, version, licence, consent or other documented legal basis, permitted purposes, redistribution status, retention period, deletion procedure, and access classification. If any field is unknown, the data stays out of training.
